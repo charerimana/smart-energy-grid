@@ -402,6 +402,25 @@ docker compose restart timescaledb
 
 ---
 
+# MQTT Configuration
+
+The project uses EMQX as the MQTT broker.
+
+Default broker configuration used in the Python scripts:
+
+```python
+BROKER_HOST = "localhost"
+BROKER_PORT = 1883
+USERNAME = "admin"
+PASSWORD = "Test@123"
+```
+
+- Ensure the authentication user is created before running Python scripts.
+- Update credentials in the Python scripts if different credentials are used.
+- Ensure EMQX authentication is enabled if testing secured MQTT access.
+
+---
+
 # MQTT Topic Structure
 
 ```text
