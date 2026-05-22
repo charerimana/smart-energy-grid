@@ -19,14 +19,33 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 
 
-def generate_power(hour):
-  morning_peak = math.sin((hour - 7) / 24 * 2 * math.pi) * 2
-  evening_peak = math.sin((hour - 19) / 24 * 2 * math.pi) * 4
+import random
 
-  base = 2
-  noise = random.uniform(-0.5, 0.5)
+def generate_power(hour, meter_bias = 1.0):
+  """Generate realistic smart-meter power usage patterns."""
+  
+  base = random.uniform(0.3, 1.2)
+  peak = 0.2
 
-  return max(base + morning_peak + evening_peak + noise, 0.2)
+  if 6.0 <= hour < 9.0:
+    # Morning peak (06:00 to 08:59)
+    peak = random.uniform(2.0, 5.0)
+  elif 9.0 <= hour < 17.0:
+     # Daytime moderate usage (09:00 to 16:59)
+    peak = random.uniform(1.0, 3.0)
+  elif 17.0 <= hour < 22.0:
+    # Evening peak (17:00 to 21:59)
+    peak = random.uniform(4.0, 8.0)
+  else:
+    # Night low usage (22:00 to 05:59)
+    peak = random.uniform(0.2, 1.0)
+
+  appliance_spike = random.choice([0.0, 0.0, 0.0, random.uniform(1.0, 3.0)])
+  noise = random.uniform(-0.3, 0.3)
+
+  total_power = (base + peak + appliance_spike) * meter_bias + noise
+
+  return round(max(total_power, 0.2), 2)
 
 
 start_date = datetime.now(timezone.utc) - timedelta(weeks=4)
@@ -36,7 +55,7 @@ current = start_date
 buffer = []
 
 while current < end_date:
-  hour = current.hour
+  hour = current.hour + (current.minute / 60.0)
 
   for i in range(TOTAL_METERS):
     meter_id = 1000000000 + i

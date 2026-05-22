@@ -16,16 +16,31 @@ USERNAME = "admin"
 PASSWORD = "Test@123"
 
 
-def generate_power(hour):
-  morning_peak = math.sin((hour - 7) / 24 * 2 * math.pi) * 2
-  evening_peak = math.sin((hour - 19) / 24 * 2 * math.pi) * 4
+def generate_power(hour, meter_bias = 1.0):
+  """Generate realistic smart-meter power usage patterns."""
+  
+  base = random.uniform(0.3, 1.2)
+  peak = 0.2
 
-  base = 2
-  noise = random.uniform(-0.5, 0.5)
+  if 6.0 <= hour < 9.0:
+    # Morning peak (06:00 to 08:59)
+    peak = random.uniform(2.0, 5.0)
+  elif 9.0 <= hour < 17.0:
+     # Daytime moderate usage (09:00 to 16:59)
+    peak = random.uniform(1.0, 3.0)
+  elif 17.0 <= hour < 22.0:
+    # Evening peak (17:00 to 21:59)
+    peak = random.uniform(4.0, 8.0)
+  else:
+    # Night low usage (22:00 to 05:59)
+    peak = random.uniform(0.2, 1.0)
 
-  power = base + morning_peak + evening_peak + noise
+  appliance_spike = random.choice([0.0, 0.0, 0.0, random.uniform(1.0, 3.0)])
+  noise = random.uniform(-0.3, 0.3)
 
-  return max(power, 0.2)
+  total_power = (base + peak + appliance_spike) * meter_bias + noise
+
+  return round(max(total_power, 0.2), 2)
 
 
 def on_connect(client, userdata, flags, rc, properties):

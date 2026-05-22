@@ -9,7 +9,7 @@ BROKER_PORT = 1883
 USERNAME = "admin"
 PASSWORD = "Test@123"
 
-BATCH_SIZE = 2000
+BATCH_SIZE = 5000
 buffer = []
 
 conn = psycopg2.connect(
