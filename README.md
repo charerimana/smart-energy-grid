@@ -293,6 +293,21 @@ uv run python simulator/historical_loader.py
 uv run python benchmark/benchmark.py
 ```
 
+## Run Query Analyze Directly
+
+To use `EXPLAIN ANALYZE`, prepend it directly to your query.
+
+```bash
+EXPLAIN ANALYZE 
+SELECT * FROM energy_readings;
+```
+
+For Best Visualization Arguments,
+```bash
+EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT TEXT) 
+SELECT * FROM energy_readings;
+```
+
 ---
 
 # Useful Docker Commands
