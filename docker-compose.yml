@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: smart_grid
     volumes:
       - timescale_data:/var/lib/postgresql/data
-      - ./sql:/docker-entrypoint-initdb.d:ro
+      # - ./sql:/docker-entrypoint-initdb.d:ro
 
   emqx:
     image: emqx/emqx:latest
