@@ -1,13 +1,18 @@
 -- Query 1: Real-Time Meter Readings
 SELECT
   timestamp AS time,
+  -- time_bucket('1 hour', timestamp) AS time,
   AVG(power) AS "Current Average Load (kW)",
   MAX(power) AS "Max Peak (kW)"
-FROM energy_readings
+FROM
+  energy_readings
 WHERE
-  timestamp >= NOW() - INTERVAL '1 hour'
-GROUP BY timestamp
-ORDER BY timestamp ASC;
+  -- timestamp >= NOW() - INTERVAL '1 hour'
+  $__timeFilter(timestamp)
+GROUP BY
+  timestamp
+ORDER BY
+  timestamp ASC;
 
 
 -- Query 2: Daily Consumption Patterns
@@ -29,13 +34,16 @@ ORDER BY time;
 
 -- Query 3: Weekly Trends
 SELECT
-  time_bucket('1 day', timestamp) AS time,
+  time_bucket('7 day', timestamp) AS time,
   AVG(power) AS avg_power
-FROM energy_readings
--- WHERE timestamp >= NOW() - INTERVAL '7 days'
-WHERE $__timeFilter(timestamp)
-GROUP BY time
-ORDER BY time;
+FROM
+  energy_readings -- WHERE timestamp >= NOW() - INTERVAL '7 days'
+WHERE
+  $__timeFilter(timestamp)
+GROUP BY
+  time
+ORDER BY
+  time;
 
 
 -- Query 4: Monthly Energy Usage by Region
